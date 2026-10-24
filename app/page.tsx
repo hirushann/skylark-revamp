@@ -1,69 +1,190 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Industries } from "@/components/industries";
+import {
+  AboutSection,
+  BusinessSection,
+  CtaBanner,
+  FaqList,
+  ReasonsList,
+  ServicesGrid,
+  serviceIcons,
+} from "@/components/sections";
+import { ButtonLink, Container, SectionHeading } from "@/components/ui";
+import { company, homeFaq, homeReasons, services } from "@/lib/content";
+
+function Hero() {
+  return (
+    <section className="relative -mt-[76px] overflow-hidden pt-[76px]">
+      <div aria-hidden className="grid-bg absolute inset-0" />
+      <div aria-hidden className="absolute -top-48 right-[-10%] h-[28rem] w-[40rem] rounded-full bg-sky/30 blur-3xl" />
+      <Container className="relative grid items-center gap-16 py-20 sm:py-28 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <Link
+            href="/services#talent"
+            className="inline-flex items-center gap-2 rounded-full border border-line bg-white/70 py-1 pl-1 pr-3 text-sm text-muted backdrop-blur transition hover:border-ink/20"
+          >
+            <span className="rounded-full bg-ink px-2.5 py-0.5 text-xs font-medium text-white">New</span>
+            Part-time &amp; full-time remote teams
+            <ArrowUpRight className="size-3.5" />
+          </Link>
+          <h1 className="mt-7 text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.045em] text-balance sm:text-7xl">
+            Unlocking global talent. Outsource with{" "}
+            <span className="accent-serif text-accent">expertise.</span>
+          </h1>
+          <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted text-pretty">
+            Soaring to new heights in software development outsourcing. Experience seamless collaboration, unlock
+            global talent, and watch your projects take flight with our team of experts. Let us be your wings to
+            success!
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <ButtonLink href="/about">Learn more</ButtonLink>
+            <ButtonLink href="#how-it-works" variant="secondary">
+              How it works
+            </ButtonLink>
+          </div>
+        </div>
+
+        <div className="relative lg:col-span-5">
+          <div className="float relative rounded-[2rem] bg-night p-7 text-white shadow-[0_40px_80px_-30px_rgb(8_13_24/0.55)]">
+            <div aria-hidden className="grid-bg-dark absolute inset-0 rounded-[2rem]" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-white/60">Global delivery</p>
+                <span className="flex items-center gap-1.5 text-xs text-sky">
+                  <span className="size-1.5 animate-pulse rounded-full bg-sky" /> Live
+                </span>
+              </div>
+              <ul className="mt-6 space-y-2">
+                {company.regions.map((r, i) => (
+                  <li
+                    key={r}
+                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm"
+                  >
+                    {r}
+                    <span className="font-mono text-xs text-white/40">0{i + 1}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-6">
+                <div>
+                  <p className="text-4xl font-semibold tracking-tight">100%</p>
+                  <p className="mt-1 text-xs text-white/50">Customer satisfaction</p>
+                </div>
+                <div className="flex -space-x-2">
+                  {services.slice(0, 4).map(({ key }) => {
+                    const Icon = serviceIcons[key];
+                    return (
+                      <span key={key} className="grid size-9 place-items-center rounded-full border-2 border-night bg-sky text-night">
+                        <Icon className="size-4" />
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="absolute -left-6 -top-8 hidden rounded-2xl border border-line bg-white px-5 py-4 shadow-xl sm:block">
+            <p className="text-2xl font-semibold tracking-tight">10+</p>
+            <p className="text-xs text-muted">Projects delivered</p>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+    <>
+      <Hero />
+      <AboutSection />
+
+      <section className="pb-24 sm:pb-32">
+        <Container>
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <SectionHeading
+              eyebrow="Services"
+              title={
+                <>
+                  What we are doing <span className="accent-serif text-accent">best</span>
+                </>
+              }
+              body={`Skylark's global clientele spans ${company.regions.join(", ")} — attesting to our widespread service delivery across diverse regions.`}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <ButtonLink href="/services" variant="secondary">
+              All services
+            </ButtonLink>
+          </div>
+          <div className="mt-12">
+            <ServicesGrid />
+          </div>
+        </Container>
+      </section>
+
+      <section id="how-it-works" className="scroll-mt-20 bg-night py-24 sm:py-32">
+        <Container>
+          <SectionHeading
+            dark
+            eyebrow="Why choose us"
+            title={
+              <>
+                Our platform takes away the <span className="accent-serif text-sky">hard process</span> of scaling
+                your business
+              </>
+            }
+          />
+          <div className="mt-14">
+            <ReasonsList items={homeReasons.items} />
+          </div>
+        </Container>
+      </section>
+
+      <BusinessSection />
+
+      <section className="pb-24 sm:pb-32">
+        <Container>
+          <SectionHeading
+            eyebrow="What we offer"
+            title={
+              <>
+                Industries we have <span className="accent-serif text-accent">served</span>
+              </>
+            }
+            body="We have provided our services to clients around the globe including United Kingdom, Australia, USA and Canada."
+          />
+          <div className="mt-12">
+            <Industries />
+          </div>
+        </Container>
+      </section>
+
+      <section className="pb-24 sm:pb-32">
+        <Container className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <SectionHeading
+              eyebrow="FAQ"
+              title={
+                <>
+                  Frequently asked <span className="accent-serif text-accent">questions</span>
+                </>
+              }
+            />
+            <p className="reveal mt-5 text-[15px] text-muted">
+              More answers on the{" "}
+              <Link href="/faq" className="font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink">
+                FAQ page
+              </Link>
+              .
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <FaqList items={homeFaq} />
+          </div>
+        </Container>
+      </section>
+
+      <CtaBanner />
+    </>
   );
 }
