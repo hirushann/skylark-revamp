@@ -5,17 +5,11 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
-  cacheComponents: true,
-  // Keep links to the previous site's routes working. Redirect matching is
-  // case-insensitive, so the old /Services and /Faq can't be listed here
-  // without looping onto /services and /faq.
-  async redirects() {
-    return [
-      { source: "/about-2", destination: "/about", permanent: true },
-      { source: "/contactus", destination: "/contact", permanent: true },
-    ];
-  },
-  partialPrefetching: true,
+  // Plain HTML/CSS/JS in out/, so Hostinger serves files and never runs Next.js.
+  // Redirects for the old site's URLs live in public/.htaccess.
+  output: "export",
+  // Emits about/index.html etc., which Apache/LiteSpeed serve without rewrites
+  trailingSlash: true,
   turbopack: {
     rules: {
       "*.css": {

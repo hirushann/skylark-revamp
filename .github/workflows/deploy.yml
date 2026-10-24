@@ -1,0 +1,39 @@
+# Builds the static site on GitHub (Hostinger's build servers can't run the
+# Next.js compiler) and uploads out/ to Hostinger over FTP.
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two uploads at once; a newer push supersedes an older one
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+      - name: Upload to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./out/
+          # Folder the site is served from, relative to the FTP account's root
+          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}

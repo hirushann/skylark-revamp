@@ -1,8 +1,4 @@
-import { cacheLife } from "next/cache";
-
-// Cached so the prerendered shell can read the clock; refreshed daily.
-export async function Year() {
-  "use cache";
-  cacheLife("days");
+// Evaluated at build time; every deploy refreshes it.
+export function Year() {
   return <>{new Date().getFullYear()}</>;
 }

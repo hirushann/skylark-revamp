@@ -1,0 +1,26 @@
+Options -MultiViews
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # The previous site's URLs (matched case-sensitively, so /services is untouched)
+  RewriteRule ^about-2/?$ /about/ [L,R=301]
+  RewriteRule ^Services/?$ /services/ [L,R=301]
+  RewriteRule ^contactus/?$ /contact/ [L,R=301]
+  RewriteRule ^Faq/?$ /faq/ [L,R=301]
+  RewriteRule ^careers$ /careers/ [L,R=301]
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # Hashed build assets never change
+  <FilesMatch "^_next/static/">
+    ExpiresDefault "access plus 1 year"
+  </FilesMatch>
+</IfModule>

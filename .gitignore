@@ -41,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# static upload bundle
+/skylark-static.zip

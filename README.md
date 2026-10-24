@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Skylark Innovations website
 
-## Getting Started
+Next.js site exported as static HTML (`output: "export"`), so hosting only needs to serve files.
 
-First, run the development server:
+## Develop
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Site copy lives in `lib/content.ts`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Hostinger
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Automatic (GitHub Actions)
 
-## Learn More
+Every push to `main` runs `.github/workflows/deploy.yml`: it lints, builds, and uploads `out/` over FTP. It can also be started by hand from the Actions tab.
 
-To learn more about Next.js, take a look at the following resources:
+Repository → Settings → Secrets and variables → Actions:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Kind | Name | Value |
+| --- | --- | --- |
+| Secret | `FTP_SERVER` | FTP host from hPanel → Files → FTP Accounts (an IP or `ftp.yourdomain.com`) |
+| Secret | `FTP_USERNAME` | FTP username, e.g. `u123456789` or `u123456789.yourdomain.com` |
+| Secret | `FTP_PASSWORD` | That FTP account's password |
+| Variable (optional) | `FTP_SERVER_DIR` | Site folder relative to the FTP login folder, ending in `/`. Defaults to `public_html/`; use `./` if the FTP account opens straight into `public_html` |
+| Variable (optional) | `FTP_PROTOCOL` | Defaults to `ftps`; set to `ftp` only if the TLS connection fails |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Uploads are incremental (the action keeps `.ftp-deploy-sync-state.json` on the server). Files that were already in `public_html` before the first deploy are left alone — delete the old site's files once by hand.
 
-## Deploy on Vercel
+### Manual
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Build on your machine (or CI), not on Hostinger: Hostinger's build servers have a glibc too old for Next.js's native compiler.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+cd out && zip -r ../skylark-static.zip .
+```
+
+In hPanel → File Manager → `public_html`, delete the old files, upload `skylark-static.zip`, and extract it there. `out/.htaccess` (from `public/.htaccess`) handles HTTPS, the 404 page and redirects from the previous site's URLs — make sure hidden files are shown so it isn't missed.
