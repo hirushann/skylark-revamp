@@ -15,16 +15,18 @@ Site copy lives in `lib/content.ts`.
 
 ### Automatic (GitHub → Hostinger)
 
-Hostinger's build servers have a glibc too old for Next.js's native compiler, so Hostinger must never build `main`. Instead, every push to `main` runs `.github/workflows/deploy.yml`, which lints and builds on GitHub and force-pushes the finished site to the `hostinger` branch (`out/` plus a stub `package.json` whose build is a no-op). No secrets are needed.
+Hostinger's build servers have a glibc too old for Next.js's native compiler, so Hostinger must never build `main`. Instead, every push to `main` runs `.github/workflows/deploy.yml`, which lints and builds on GitHub and force-pushes the finished site to the `hostinger` branch: `out/` plus the small Express app in `hostinger/` that serves it and handles the old-site redirects. No secrets are needed.
 
-Hostinger deployment settings:
+Hostinger Node.js web app settings:
 
 | Setting | Value |
 | --- | --- |
-| Framework preset | Other / static, if offered; otherwise leave Next.js |
+| Framework / application type | Express |
 | Branch | `hostinger` |
-| Build command | `npm run build` |
-| Output directory | `out` |
+| Entry file | `server.js` |
+| Node version | 18 or later (22.x is fine) |
+
+To upload by hand instead, zip the `hostinger` branch: `git fetch origin hostinger && git archive --format=zip -o skylark-hostinger.zip FETCH_HEAD`.
 
 Never edit the `hostinger` branch; it is replaced on every build.
 

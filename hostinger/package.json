@@ -1,0 +1,13 @@
+{
+  "name": "skylark-site",
+  "private": true,
+  "type": "module",
+  "description": "Prebuilt by GitHub Actions from main. Do not edit; push to main instead.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

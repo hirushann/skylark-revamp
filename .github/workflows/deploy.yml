@@ -1,6 +1,7 @@
 # Hostinger's build servers have a glibc too old for the Next.js compiler, so
 # the site is built here and the finished files are pushed to the `hostinger`
-# branch. Hostinger deploys that branch: its "build" is a no-op and it serves out/.
+# branch. Hostinger deploys that branch as an Express app (hostinger/server.js)
+# that serves out/.
 name: Build for Hostinger
 
 on:
@@ -35,16 +36,7 @@ jobs:
         run: |
           mkdir deploy
           cp -R out deploy/out
-          cat > deploy/package.json <<'EOF'
-          {
-            "name": "skylark-static",
-            "private": true,
-            "description": "Prebuilt by GitHub Actions from main. Do not edit; push to main instead.",
-            "scripts": {
-              "build": "echo \"Already built — serving out/\""
-            }
-          }
-          EOF
+          cp hostinger/server.js hostinger/package.json deploy/
           cd deploy && npm install --package-lock-only --no-audit --no-fund
 
       - name: Push to the hostinger branch
