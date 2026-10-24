@@ -1,19 +1,23 @@
-# Builds the static site on GitHub (Hostinger's build servers can't run the
-# Next.js compiler) and uploads out/ to Hostinger over FTP.
-name: Deploy to Hostinger
+# Hostinger's build servers have a glibc too old for the Next.js compiler, so
+# the site is built here and the finished files are pushed to the `hostinger`
+# branch. Hostinger deploys that branch: its "build" is a no-op and it serves out/.
+name: Build for Hostinger
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-# Never run two uploads at once; a newer push supersedes an older one
+permissions:
+  contents: write
+
+# A newer push supersedes an older one
 concurrency:
-  group: deploy-hostinger
+  group: build-hostinger
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,13 +31,30 @@ jobs:
       - run: npm run lint
       - run: npm run build
 
-      - name: Upload to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
-          local-dir: ./out/
-          # Folder the site is served from, relative to the FTP account's root
-          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
+      - name: Assemble the prebuilt site
+        run: |
+          mkdir deploy
+          cp -R out deploy/out
+          cat > deploy/package.json <<'EOF'
+          {
+            "name": "skylark-static",
+            "private": true,
+            "description": "Prebuilt by GitHub Actions from main. Do not edit; push to main instead.",
+            "scripts": {
+              "build": "echo \"Already built — serving out/\""
+            }
+          }
+          EOF
+          cd deploy && npm install --package-lock-only --no-audit --no-fund
+
+      - name: Push to the hostinger branch
+        working-directory: deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git init -q -b hostinger
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Static build of ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" hostinger
